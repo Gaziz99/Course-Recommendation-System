@@ -1,0 +1,67 @@
+{% include "menu.html" %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GFVM</title>
+    <link href="{% static 'https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700,800,900' %}" rel="stylesheet">
+		
+		<link rel="stylesheet" href="{% static 'css/owl.carousel.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/owl.theme.default.min.css' %}">
+		<link rel="stylesheet" href="{% static 'https://cdnjs.cloudflare.com/ajax/libs/ionicons/4.5.6/css/ionicons.min.css' %}">
+		<link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+
+    <style>
+      .grid-container {
+        display: grid;
+        grid-column-gap: 10px;
+        grid-row-gap: 10px;
+        grid-template-columns: auto auto auto auto auto auto;
+        padding-left: 75px;
+        padding-top: 30px;
+      }
+      
+      .grid-item {
+      
+        padding: 10px;
+        font-size: 15px;
+        text-align: left;
+      }
+      </style>
+    
+</head>
+<body>
+  
+  <div class="card-deck">
+    <div class="grid-container">
+    {% for course in courses %}
+    {% if course.c_type == "GFVM" %}
+    <div class="card bg-light mb-3 grid-item" style="width: 18rem;">
+        <img style="height: 18rem;" src="{{course.img.url}}" alt="Card image cap">
+        <div class="card-body">
+          <h5 class="card-title">{{course.name}}</h5>
+          <p class="card-text">{{course.desc}}</p>
+        </div>
+        <div class="card-footer">
+          <a href="#" class="btn btn-primary">See report</a>
+        </div>
+      </div>
+      
+      {% endif %}
+
+      {% endfor %}
+      </div>
+    </div>
+
+    <script src="{% static 'js/jquery.min.js' %}"></script>
+    <script src="{% static 'js/popper.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/owl.carousel.min.js' %}"></script>
+    <script src="{% static 'js/main.js' %}"></script>
+</body>
+</html>
