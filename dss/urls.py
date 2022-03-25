@@ -17,4 +17,9 @@ urlpatterns = [
     path('gt', views.gt, name='gt'),
     path('gcap', views.gcap, name='gcap'),
     path('search/', SearchResultsView.as_view(), name="search_results" ),
+    path('rate',views.rate_course, name='rate-course'),
+    path('recommendation',views.recommendation,name='recommendation'),
+    path('details',views.details, name='details'),
+    path('comment',views.comment_course, name="comment-course"),
+ 
 ]

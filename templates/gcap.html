@@ -14,9 +14,14 @@
     <link rel="stylesheet" href="{% static 'css/owl.theme.default.min.css' %}">
 		<link rel="stylesheet" href="{% static 'https://cdnjs.cloudflare.com/ajax/libs/ionicons/4.5.6/css/ionicons.min.css' %}">
 		<link rel="stylesheet" href="{% static 'css/style.css' %}">
-    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
     <style>
+
+      .responsive {
+        width: 100%;
+        height: auto;
+      }
       .grid-container {
         display: grid;
         grid-column-gap: 10px;
@@ -32,6 +37,14 @@
         font-size: 15px;
         text-align: left;
       }
+      .checked {
+        color: orange;
+      }
+
+      .my-star {
+      background-color: inherit !important;
+      border: 0 !important;
+      }
       </style>
 </head>
 <body>
@@ -41,15 +54,29 @@
     {% for course in courses %}
     {% if course.c_type == "GCAP" %}
     <div class="card bg-light mb-3 grid-item" style="width: 18rem;">
-        <img style="height: 18rem;" src="{{course.img.url}}" alt="Card image cap">
-        <div class="card-body">
-          <h5 class="card-title">{{course.name}}</h5>
-          <p class="card-text">{{course.desc}}</p>
-        </div>
-        <div class="card-footer">
-          <a href="#" class="btn btn-primary">See report</a>
-        </div>
+      <img class="responsive" src="{{course.img.url}}" alt="Card image cap">
+      <div class="card-body">
+        <h5 class="card-title">{{course.name}}</h5>
+      
       </div>
+      {%if user.is_authenticated %}
+      <div class="card-footer">
+        <form class="rate-form" action="" method="post" id = "{{course.id}}">
+          {% csrf_token %}
+        
+          <button type="submit" class="fa fa-star my-star" id="star.1.{{course.id}}.{{user.id}}"></button>
+          <button type="submit" class="fa fa-star my-star" id = "star.2.{{course.id}}.{{user.id}}"></button>
+          <button type="submit" class="fa fa-star my-star" id = "star.3.{{course.id}}.{{user.id}}"></button>
+          <button type="submit" class="fa fa-star my-star" id = "star.4.{{course.id}}.{{user.id}}"></button>
+          <button type="submit" class="fa fa-star my-star" id = "star.5.{{course.id}}.{{user.id}}"></button>
+          
+      </form>
+        
+      </div>
+      {% endif %}
+
+      <a href="details?{{course.name}}|{{course.desc}}|{{course.img.url}}|{{course.c_department}}|{{course.c_final}}|{{course.c_project}}|{{course.c_quiz}}|{{course.c_assignments}}|{{course.c_participation}}|{{course.c_content}}|{{course.c_id}}|{{course.c_prereq}}" class="btn btn-primary">See Details</a>
+    </div>
       
       {% endif %}
 
@@ -62,5 +89,7 @@
     <script src="{% static 'js/bootstrap.min.js' %}"></script>
     <script src="{% static 'js/owl.carousel.min.js' %}"></script>
     <script src="{% static 'js/main.js' %}"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"
+    integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 </body>
 </html>

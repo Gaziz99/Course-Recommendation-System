@@ -9,6 +9,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 from .models import user_type, CustomUser
 
+
 # Create your views here.
 
 def home(request):
@@ -129,4 +130,6 @@ def login(request):
 def logout(request):
     auth.logout(request)
     return redirect('/')
+
+
 

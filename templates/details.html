@@ -1,0 +1,199 @@
+{% include "menu.html" %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+ 
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+    <link rel="stylesheet" href="{% static 'css/owl.carousel.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/owl.theme.default.min.css' %}">
+		<link rel="stylesheet" href="{% static 'https://cdnjs.cloudflare.com/ajax/libs/ionicons/4.5.6/css/ionicons.min.css' %}">
+		<link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <title>Details</title>
+    <style>
+        table.fixed {
+            table-layout: fixed;
+            width: 100%;
+          }
+      table.fixed td {
+            overflow: hidden;
+            word-wrap:break-word
+          }
+    </style>
+</head>
+<body>
+    <h1 class="title is-1" style="text-align: center;">Course Details</h1>
+
+
+
+    <table class="table fixed">
+            <col width=10 />
+            <col width=20 />
+            <col width=20 />
+            <col width=20 />
+            <col width=20 />
+            <col width=20 />
+            
+        <thead>
+            <tr>
+              <th>Record</th>
+              <th>Course ID</th>
+              <th >Course Name</th>
+              <th> Course Department</th>
+              <th>Course Description</th>
+              <th>Course Prerequisite</th>
+            
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+                <th>1</th>
+                <td id="c_id"></td>
+                <td id="c_name" ></td>
+                <td id="c_department" ></td>
+                <td id="c_description" ></td>
+                <td id="c_prereq" ></td>
+                
+                
+              </tr>
+          </tbody>
+    </table>
+    <div id="container" style="height: 400px;" ></div>
+
+    <form class="comment-course" action="" method="post" id = "comment-form">
+        {% csrf_token %}
+        <label>Leave a Comment:</label><br>
+        <textarea type="text" id="new_comment" name="comment"></textarea><br>
+        <input type="submit" value="Submit">
+    </form>
+
+
+    <script src="https://cdn.anychart.com/releases/8.0.1/js/anychart-core.min.js"></script>
+    <script src="https://cdn.anychart.com/releases/8.0.1/js/anychart-pie.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"
+    integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script>
+
+        var queryString = location.search.substring(1);
+        var a = queryString.split("|");
+
+        var course_name = a[0];
+        var course_desc = a[1];
+        var course_img = a[2];
+        var course_department = a[3];
+        var course_final = a[4];
+        var course_project = a[5];
+        var course_quiz = a[6];
+        var course_assignments = a[7];
+        var course_participation = a[8];
+        var course_content = a[9];
+        var course_id = a[10];
+        var course_prereq = a[11];
+       
+
+
+        window.onload = function() {
+        //when the document is finished loading, replace everything
+        //between the <a ...> </a> tags with the value of splitText
+        document.getElementById("c_id").innerHTML=course_id;
+        document.getElementById("c_name").innerHTML=strReplace(course_name);
+        document.getElementById("c_department").innerHTML=strReplace(course_department);
+        document.getElementById("c_description").innerHTML=strReplace(course_desc);
+        document.getElementById("c_prereq").innerHTML=strReplace(course_prereq);
+
+       
+
+        anychart.onDocumentReady(function() {
+
+            // set the data
+            var data = [
+            {x: "Final Exam", value: course_final},
+            {x: "Assignments", value: course_assignments},
+            {x: "Participation", value: course_participation},
+            {x: "Project", value: course_project},
+            {x: "Quiz", value: course_quiz},
+        ];
+          
+            // create the chart
+            var chart = anychart.pie();
+          
+            // set the chart title
+            chart.title("Assessment Distribution");
+          
+            // add the data
+            chart.data(data);
+            
+        
+            
+          
+            // display the chart in the container
+            chart.container('container');
+            chart.draw();
+          
+          });
+     } 
+    </script>
+
+    <script>
+        function strReplace(oldStr){
+    
+            var newStr = oldStr.replace(/%20/g, " ");
+            
+            newStr = newStr.replace(/%22/g, "'");
+          
+            return newStr
+        }
+    </script>
+    <script>
+
+        var queryString = location.search.substring(1);
+        var a = queryString.split("|");
+
+        const csrf = document.getElementsByName('csrfmiddlewaretoken')
+
+        const c_id = a[12];
+        const u_id = a[13];
+        var formC = document.getElementById("comment-form");
+        
+
+        formC.addEventListener('submit',e=>{
+			
+			e.preventDefault()
+
+            const comment = document.getElementById("new_comment");
+
+        $.ajax({
+            type: 'POST',
+            url: '/comment',
+            data:{
+                'csrfmiddlewaretoken':csrf[0].value,
+                'course_id':c_id,
+                'user_id':u_id,
+                'comment':comment,
+            },
+            success: function(response){
+                console.log(response)
+            },
+            error: function(error){
+                console.log(error)
+            }
+        })
+        })
+
+
+    </script>
+
+
+   
+    
+
+
+</body>
+</html>
