@@ -38,7 +38,7 @@ class Course_Ratings(models.Model):
    user_rating = models.IntegerField(default=0, validators=[MinValueValidator(0),MaxValueValidator(5)])
 
    def __str__(self):
-       return self.user_rating
+       return str(self.user_rating)
 
    class Meta:
       ordering = ['user_rating']

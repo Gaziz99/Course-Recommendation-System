@@ -1,7 +1,16 @@
 from re import template
 from django.http.response import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.http import HttpResponse, JsonResponse
+
+import pandas as pd
+from sklearn.metrics.pairwise import cosine_similarity
+from sklearn.feature_extraction.text import TfidfVectorizer
+from processing import preprocessing
+from evaluation import evaluation
+from sklearn.metrics.pairwise import linear_kernel
+
+from django_pandas.io import read_frame
 
 from authenticate.models import CustomUser
 from .models import Course
@@ -10,6 +19,7 @@ import json
 from django.db.models import Q
 
 from .models import Course_Ratings, Course_Comment
+from django.contrib import messages
 
 import random
 
@@ -88,26 +98,60 @@ def rate_course(request):
     return JsonResponse({'success':'false'})
     
 
+
+
+
+
 def recommendation(request):
-  
 
-    preferences = Course_Ratings.objects.filter(user_rating__gte = 4,user_id = request.user.id)
+    course_data = Course.objects.all()
+    rating_data = Course_Ratings.objects.all()
 
-    
-    i = random.randint(0,len(preferences)-1)
+    course = read_frame(course_data, fieldnames=['id','name','c_content'])
+    rating_data = read_frame(rating_data)
 
+    tfidf = TfidfVectorizer(stop_words='english')
+    course['c_content'] = course['c_content'].fillna('')
+    overview_matrix = tfidf.fit_transform(course['c_content'])
+    similarity_matrix = linear_kernel(overview_matrix,overview_matrix)
+    mapping = pd.Series(course.index,index = course['name'])
 
-    courses = Course.objects.filter(id=preferences[i].course_id_id)
-    
+    preferences = Course_Ratings.objects.filter(user_rating__gte = 3,user_id = request.user.id)
+    if not preferences:
+        messages.info(request, "Please rate some courses first.")
+        return redirect(index)
+    else:
+        courses = Course.objects.filter(id=preferences[0].course_id_id)
 
-    return render(request, "recommendation.html", {"courses" : courses})
+        course_index = mapping[courses[0].name]
+        similarity_score = list(enumerate(similarity_matrix[course_index]))
+        similarity_score = sorted(similarity_score, key=lambda x: x[1], reverse=True)
+        similarity_score = similarity_score[1:15]
+        course_indices = [i[0] for i in similarity_score]
+        recoms = course['name'].iloc[course_indices]
+
+        
+        courses =  Course.objects.filter(name__in=recoms)
+
+        
+        
+
+        return render(request, "recommendation.html", {"courses" : courses})
 
 
 def details(request):
 
-    comments = Course_Comment.objects.all()
+    link_url = request.GET.get('q')
+    name = link_url.split("|")[12]
 
-    return render(request,"details.html",{"comments":comments})
+  
+
+    comment_objects = Course_Comment.objects.filter(course_id=name)
+
+    user_objects = CustomUser.objects.all()
+
+
+    return render(request,"details.html",{"comments":comment_objects,"users":user_objects})
 
 
 def comment_course(request):

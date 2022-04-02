@@ -42,20 +42,18 @@
   <div class="card-deck">
     <div class="grid-container">
     {% for course in courses %}
- 
+  
     <div class="card bg-light mb-3 grid-item" style="width: 18rem;">
- 
+      <img class="responsive" src="{{course.img.url}}" alt="Card image cap">
       <div class="card-body">
-        <h5 class="card-title">{{course.c_type}}</h5>
-        <h5 class="card-title">{{course.name}}</h5>
-        <p class="card-text">{{course.desc}}</p>
+        <h4 class="card-title">{{course.name}}</h4>
+    
       </div>
 
-
-      <a href="#" class="btn btn-primary">See report</a>
+      <a href="details?q={{course.name}}|{{course.desc}}|{{course.img.url}}|{{course.c_department}}|{{course.c_final}}|{{course.c_project}}|{{course.c_quiz}}|{{course.c_assignments}}|{{course.c_participation}}|{{course.c_content}}|{{course.c_id}}|{{course.c_prereq}}|{{course.id}}|{{user.id}}" class="btn btn-primary">See Details</a>
     </div>
       
-
+    
 
       {% endfor %}
       </div>

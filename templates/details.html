@@ -11,8 +11,9 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
     <link rel="stylesheet" href="{% static 'css/owl.carousel.min.css' %}">
     <link rel="stylesheet" href="{% static 'css/owl.theme.default.min.css' %}">
-		<link rel="stylesheet" href="{% static 'https://cdnjs.cloudflare.com/ajax/libs/ionicons/4.5.6/css/ionicons.min.css' %}">
-		<link rel="stylesheet" href="{% static 'css/style.css' %}">
+	<link rel="stylesheet" href="{% static 'https://cdnjs.cloudflare.com/ajax/libs/ionicons/4.5.6/css/ionicons.min.css' %}">
+	<link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <title>Details</title>
     <style>
@@ -68,9 +69,18 @@
     <form class="comment-course" action="" method="post" id = "comment-form">
         {% csrf_token %}
         <label>Leave a Comment:</label><br>
-        <textarea type="text" id="new_comment" name="comment"></textarea><br>
-        <input type="submit" value="Submit">
+        <textarea class ="input" type="text" id="new_comment" name="comment">This is a comment</textarea><br>
+        <button type="submit" class="button is-link" value="Submit" id = "c_name">Submit</button>
     </form>
+
+
+
+      
+    {% for comment in comments %}
+        <p class="title is-3">{{comment.user_id}}:</p>
+        <p class="subtitle is-5">{{comment.user_comment}}</p>
+    {% endfor %}
+    
 
 
     <script src="https://cdn.anychart.com/releases/8.0.1/js/anychart-core.min.js"></script>
@@ -81,10 +91,23 @@
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
     <script>
 
+        function strReplace(oldStr){
+    
+            var newStr = oldStr.replace(/%20/g, " ");
+            
+            newStr = newStr.replace(/%22/g, "'");
+
+            newStr = newStr.replace(/q=/g, "");
+          
+            return newStr
+        }
+
         var queryString = location.search.substring(1);
         var a = queryString.split("|");
 
-        var course_name = a[0];
+        var course_name_str = a[0];
+        course_name = strReplace(course_name_str);
+        console.log(course_name);
         var course_desc = a[1];
         var course_img = a[2];
         var course_department = a[3];
@@ -96,14 +119,19 @@
         var course_content = a[9];
         var course_id = a[10];
         var course_prereq = a[11];
+
+
+
+      
+        
+
        
 
 
         window.onload = function() {
-        //when the document is finished loading, replace everything
-        //between the <a ...> </a> tags with the value of splitText
+        
         document.getElementById("c_id").innerHTML=course_id;
-        document.getElementById("c_name").innerHTML=strReplace(course_name);
+        document.getElementById("c_name").innerHTML=course_name;
         document.getElementById("c_department").innerHTML=strReplace(course_department);
         document.getElementById("c_description").innerHTML=strReplace(course_desc);
         document.getElementById("c_prereq").innerHTML=strReplace(course_prereq);
@@ -141,7 +169,7 @@
      } 
     </script>
 
-    <script>
+    <!-- <script>
         function strReplace(oldStr){
     
             var newStr = oldStr.replace(/%20/g, " ");
@@ -150,7 +178,7 @@
           
             return newStr
         }
-    </script>
+    </script> -->
     <script>
 
         var queryString = location.search.substring(1);
@@ -160,14 +188,24 @@
 
         const c_id = a[12];
         const u_id = a[13];
+        
+
         var formC = document.getElementById("comment-form");
+
+        
+
+        console.log(c_id);
+        console.log(u_id);
+        console.log(formC);
+
         
 
         formC.addEventListener('submit',e=>{
 			
 			e.preventDefault()
+            const comment = document.getElementById("new_comment").value;
 
-            const comment = document.getElementById("new_comment");
+            
 
         $.ajax({
             type: 'POST',
@@ -179,6 +217,7 @@
                 'comment':comment,
             },
             success: function(response){
+                location.reload(true)
                 console.log(response)
             },
             error: function(error){
