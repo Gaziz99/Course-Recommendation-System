@@ -9,6 +9,11 @@ class CustomUser(AbstractUser):
         return self.username
     def get_email(self):
         return self.email
+    
+    class Meta:
+        permissions = (
+            ('rate_course', 'Rate course'),
+        )
 
 
 class user_type(models.Model):
@@ -21,3 +26,5 @@ class user_type(models.Model):
              return CustomUser.get_email(self.user) + " - is_student"
          else:
              return CustomUser.get_email(self.user) + " - is_teacher"
+    
+     

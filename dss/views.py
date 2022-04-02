@@ -23,6 +23,8 @@ from django.contrib import messages
 
 import random
 
+from django.contrib.auth.decorators import permission_required
+
 
 
 # Create your views here.
@@ -64,11 +66,13 @@ def gfhc(request):
 
     return render(request,'gfhc.html', {'courses':course})
 
+
 def gcap(request):
     
     course = Course.objects.all()
 
     return render(request,'gcap.html', {'courses':course})
+
 
 
 class SearchResultsView(ListView):

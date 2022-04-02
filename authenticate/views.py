@@ -8,6 +8,7 @@ from django.contrib.auth.models import auth
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 from .models import user_type, CustomUser
+import re
 
 
 # Create your views here.
@@ -89,20 +90,42 @@ def signup_student(request):
         email = request.POST.get('email')
         username = request.POST.get('username')
         password = request.POST.get('password1')
-        user = CustomUser.objects.create_user(
-            email=email,
-            username=username,
-        )
-        user.set_password(password)
-        user.save()
-        usert = None     
-        usert = user_type(user=user,is_student=True)
-        usert.save()
-        print("user created")
-        return redirect('login')
+        confirm_password = request.POST.get('password2')
+        check1 = re.match('((?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,30})',password)
+        check2 = re.match('((\d*)([a-z]*)([A-Z]*)([!@#$%^&*]*).{8,30})',password)
+       
+        if(len(password)>=8):
+            if(bool(check1)==True):
+                if password==confirm_password:
+                    if CustomUser.objects.filter(email=email).exists():
+                        print("error")
+                    elif CustomUser.objects.filter(username=username).exists():
+                        print("error")
+                    else:
+                        user = CustomUser.objects.create_user(
+                            email=email,
+                            username=username,
+                            )
+                        user.set_password(password)
+                        user.save()
+                        usert = None     
+                        usert = user_type(user=user,is_student=True)
+                        usert.save()
+                        print("user created")
+                        return redirect('login')
+                
+            else:
+                return render(request, 'signup_student.html')
         
-    else:
-        return render(request, 'signup_student.html')
+        elif(bool(check2)==True):
+            redirect('signup_student.html')
+        else:
+            redirect('signup_student.html')
+
+    return render(request,'signup_student.html')
+
+        
+        
 
 def login(request):
     if request.method == 'POST':

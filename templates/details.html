@@ -66,6 +66,7 @@
     </table>
     <div id="container" style="height: 400px;" ></div>
 
+    {%if user.is_authenticated %}
     <form class="comment-course" action="" method="post" id = "comment-form">
         {% csrf_token %}
         <label>Leave a Comment:</label><br>
@@ -80,6 +81,8 @@
         <p class="title is-3">{{comment.user_id}}:</p>
         <p class="subtitle is-5">{{comment.user_comment}}</p>
     {% endfor %}
+
+    {% endif %}
     
 
 
